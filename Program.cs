@@ -137,6 +137,33 @@ public class Program
       "Balmy", "Hot", "Sweltering", "Scorching"
     };
 
+    app.MapGet("/api/v{version:apiVersion}/api-gen",
+      async () =>
+      {
+        await new Shared().GenerateCSharpClient(
+             "http://localhost:5096/swagger/v1/swagger.json",
+             "WeatherForecast",
+             _logger
+        );
+
+        await new Shared().GenerateCSharpController(
+             "http://localhost:5096/swagger/v1/swagger.json",
+             "WeatherForecast",
+             _logger
+        );
+
+         await new Shared().GenerateTypeScriptClient(
+             "http://localhost:5096/swagger/v1/swagger.json",
+             "WeatherForecast",
+             _logger
+        );
+
+        return Results.Ok("C# client, controller and typescript client generated successfully.");
+      }
+    )
+     .WithApiVersionSet(apiv1)
+     .HasApiVersion(1.0);
+
     // Maps a GET endpoint to retrieve a weather forecast.
     app.MapGet(
       "/api/v{version:apiVersion}/weatherforecast",
@@ -360,5 +387,7 @@ public class Program
 
     // Run the application
     app.Run();
+
+
   }
 }
