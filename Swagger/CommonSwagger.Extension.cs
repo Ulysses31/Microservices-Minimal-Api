@@ -28,11 +28,11 @@ namespace Services.Test.API
       //TODO:  services.AddAuthentication().AddJwtBearer();
 
       // Add authorization with custom policies.
-      services.AddAuthorizationBuilder()
-        .AddPolicy("admin_greetings", policy =>
-          policy
-            .RequireRole("admin")
-            .RequireClaim("scope", "greetings_api"));
+      //TODO: services.AddAuthorizationBuilder()
+      //   .AddPolicy("admin_greetings", policy =>
+      //     policy
+      //       .RequireRole("admin")
+      //       .RequireClaim("scope", "greetings_api"));
 
       // Add API endpoint explorer for Swagger.
       services.AddEndpointsApiExplorer();
@@ -81,29 +81,29 @@ namespace Services.Test.API
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlDocumentFile!));
 
         // Add security definitions for Bearer tokens.
-        options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-        {
-          Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
-          Name = "Authorization",
-          In = ParameterLocation.Header,
-          Type = SecuritySchemeType.ApiKey
-        });
+        //TODO: options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        // {
+        //   Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        //   Name = "Authorization",
+        //   In = ParameterLocation.Header,
+        //   Type = SecuritySchemeType.ApiKey
+        // });
 
         // Require security schemes for all API endpoints.
-        options.AddSecurityRequirement(
-          new OpenApiSecurityRequirement {
-              {
-                  new OpenApiSecurityScheme
-                  {
-                      Reference = new OpenApiReference
-                      {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
-                      }
-                  },
-                  Array.Empty<string>()
-              }
-          });
+        //TODO: options.AddSecurityRequirement(
+        //   new OpenApiSecurityRequirement {
+        //       {
+        //           new OpenApiSecurityScheme
+        //           {
+        //               Reference = new OpenApiReference
+        //               {
+        //                 Type = ReferenceType.SecurityScheme,
+        //                 Id = "Bearer"
+        //               }
+        //           },
+        //           Array.Empty<string>()
+        //       }
+        //   });
       });
 
       return services;

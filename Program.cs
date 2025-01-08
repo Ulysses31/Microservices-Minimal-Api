@@ -114,7 +114,8 @@ public class Program
 
     // Build the application pipeline
     var app = builder.Build();
-    var apis = app.NewApiVersionSet("API").Build();
+    var apiv1 = app.NewApiVersionSet("WeatherForecast v1").Build();
+    var apiv2 = app.NewApiVersionSet("WeatherForecast v2").Build();
 
     // Middleware to log the start and end of each request
     app.Use(async (context, next) =>
@@ -157,9 +158,10 @@ public class Program
     })
     .Produces<WeatherForecast[]>(200, "application/json")
     .Produces(500)
-    .WithName("GetWeatherForecast")
-    .WithApiVersionSet(apis)
-    .HasApiVersion(1.0);
+    .WithDescription("Get the weather forecast for the next five days.")
+    .WithSummary("Get all the weather forecast.")
+    .WithApiVersionSet(apiv2)
+    .HasApiVersion(2.0);
 
     // GET by Id
     app.MapGet(
@@ -192,8 +194,9 @@ public class Program
     .Produces(400)
     .Produces(404)
     .Produces(429)
-    .WithName("GetWeatherForecastById")
-    .WithApiVersionSet(apis)
+    .WithDescription("Get the weather forecast by id.")
+    .WithSummary("Get specific weather forecast.")
+    .WithApiVersionSet(apiv1)
     .HasApiVersion(1.0);
 
     // POST endpoint to create a new weather forecast.
@@ -232,8 +235,9 @@ public class Program
     .Produces(400)
     .Produces(401)
     .Produces(429)
-    .WithName("PostWeatherForecast")
-    .WithApiVersionSet(apis)
+    .WithDescription("Insert a new weather forecast detail.")
+    .WithSummary("Insert weather forecast.")
+    .WithApiVersionSet(apiv1)
     .HasApiVersion(1.0);
 
     // PUT endpoint to update a weather forecast.
@@ -287,8 +291,9 @@ public class Program
     .Produces(401)
     .Produces(404)
     .Produces(429)
-    .WithName("PatchWeatherForecast")
-    .WithApiVersionSet(apis)
+    .WithDescription("Modify an existing weather forecast by id.")
+    .WithSummary("Edit weather forecast.")
+    .WithApiVersionSet(apiv1)
     .HasApiVersion(1.0);
 
     // DELETE endpoint to remove a weather forecast.
@@ -322,8 +327,9 @@ public class Program
     .Produces(400)
     .Produces(401)
     .Produces(429)
-    .WithName("DeleteWeatherForecast")
-    .WithApiVersionSet(apis)
+    .WithDescription("Remove existing weather forecast by id.")
+    .WithSummary("Delete weather forecast.")
+    .WithApiVersionSet(apiv1)
     .HasApiVersion(1.0);
 
     #endregion ENDPOINTS
