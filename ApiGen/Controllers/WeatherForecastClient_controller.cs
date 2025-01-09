@@ -26,10 +26,6 @@ namespace Controllers
     public interface IController
     {
 
-        /// <returns>OK</returns>
-
-        System.Threading.Tasks.Task ApiGenAsync();
-
         /// <summary>
         /// Get specific weather forecast.
         /// </summary>
@@ -91,14 +87,6 @@ namespace Controllers
         public Controller(IController implementation)
         {
             _implementation = implementation;
-        }
-
-        /// <returns>OK</returns>
-        [Microsoft.AspNetCore.Mvc.HttpGet, Microsoft.AspNetCore.Mvc.Route("api/v1/api-gen")]
-        public System.Threading.Tasks.Task ApiGen()
-        {
-
-            return _implementation.ApiGenAsync();
         }
 
         /// <summary>

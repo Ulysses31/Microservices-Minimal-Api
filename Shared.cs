@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text;
 using System.Text.Json;
+using GenApi.Hosted.Service;
 using NSwag;
 using NSwag.CodeGeneration.CSharp;
 using NSwag.CodeGeneration.TypeScript;
@@ -98,56 +99,25 @@ namespace Services.Test.API
       _logger.Information($"===> Request finished at: {DateTime.Now}");
     }
 
+
     /// <summary>
-    /// GenerateCSharpClient function 
+    /// GenerateHostedApiDoc function 
     /// </summary>
     /// <param name="openApiLocation">string</param>
     /// <param name="className">string</param>
     /// <param name="_logger">Logger</param>
     /// <returns>Task</returns>
-    public async Task GenerateCSharpClient(
+    public async Task GenerateHostedApiDoc(
       string openApiLocation,
       string className,
-      Logger _logger
+      ILogger<GenApiHostedService> _logger
     )
     {
       var document = await OpenApiDocument.FromUrlAsync(openApiLocation);
 
-      var settings = new CSharpClientGeneratorSettings
-      {
-        UseBaseUrl = false,
-        ClassName = className,
-        GenerateClientInterfaces = true,
-        CSharpGeneratorSettings = { Namespace = "HttpClients" },
-      };
+      #region CSharpController
 
-      var generator = new CSharpClientGenerator(document, settings);
-      var generatedCode = generator.GenerateFile();
-      var path = $"./ApiGen/{settings.CSharpGeneratorSettings.Namespace}/{settings.ClassName}_client.cs";
-
-      _logger.Information($"===> Generated http-client file path: {path}");
-
-      var file = new FileInfo(path);
-      file.Directory?.Create();
-      await File.WriteAllTextAsync(file.FullName, generatedCode);
-    }
-
-    /// <summary>
-    /// GenerateCSharpController function 
-    /// </summary>
-    /// <param name="openApiLocation">string</param>
-    /// <param name="className">string</param>
-    /// <param name="_logger">Logger</param>
-    /// <returns>Task</returns>
-    public async Task GenerateCSharpController(
-      string openApiLocation,
-      string className,
-      Logger _logger
-    )
-    {
-      var document = await OpenApiDocument.FromUrlAsync(openApiLocation);
-
-      var settings = new CSharpControllerGeneratorSettings
+      var settingsController = new CSharpControllerGeneratorSettings
       {
         ControllerBaseClass = "ControllerBase",
         GenerateClientClasses = true,
@@ -155,48 +125,61 @@ namespace Services.Test.API
         CSharpGeneratorSettings = { Namespace = "Controllers" },
       };
 
-      var generator = new CSharpControllerGenerator(document, settings);
-      var generatedCode = generator.GenerateFile();
-      var path = $"./ApiGen/{settings.CSharpGeneratorSettings.Namespace}/{className}_controller.cs";
+      var generatorController = new CSharpControllerGenerator(document, settingsController);
+      var generatedCodeController = generatorController.GenerateFile();
+      var pathController = $"./ApiGen/{settingsController.CSharpGeneratorSettings.Namespace}/{className}_controller.cs";
 
-      _logger.Information($"===> Generated controller file path: {path}");
+      _logger.LogInformation($"===> Generated controller file path: {pathController}");
 
-      var file = new FileInfo(path);
-      file.Directory?.Create();
-      await File.WriteAllTextAsync(file.FullName, generatedCode);
+      var fileController = new FileInfo(pathController);
+      fileController.Directory?.Create();
+      await File.WriteAllTextAsync(fileController.FullName, generatedCodeController);
+
+      #endregion CSharpController
+
+      #region CSharpClient
+
+      var settingsClient = new CSharpClientGeneratorSettings
+      {
+        UseBaseUrl = false,
+        ClassName = className,
+        GenerateClientInterfaces = true,
+        CSharpGeneratorSettings = { Namespace = "HttpClients" },
+      };
+
+      var generatorClient = new CSharpClientGenerator(document, settingsClient);
+      var generatedCodeClient = generatorClient.GenerateFile();
+      var pathClient = $"./ApiGen/{settingsClient.CSharpGeneratorSettings.Namespace}/{settingsClient.ClassName}_client.cs";
+
+      _logger.LogInformation($"===> Generated csharp-client file path: {pathClient}");
+
+      var fileClient = new FileInfo(pathClient);
+      fileClient.Directory?.Create();
+      await File.WriteAllTextAsync(fileClient.FullName, generatedCodeClient);
+
+      #endregion CSharpClient
+
+      #region TypescriptClient
+
+      var settingsTypescript = new TypeScriptClientGeneratorSettings
+      {
+        ClassName = className,
+        Template = TypeScriptTemplate.Fetch,
+        TypeScriptGeneratorSettings = { Namespace = "HttpClients" },
+      };
+
+      var generatorTypescript = new TypeScriptClientGenerator(document, settingsTypescript);
+      var generatedCodeTypescript = generatorTypescript.GenerateFile();
+      var pathTypescript = $"./ApiGen/{settingsTypescript.TypeScriptGeneratorSettings.Namespace}/{settingsTypescript.ClassName}.ts";
+
+      _logger.LogInformation($"===> Generated typescript-client file path: {pathTypescript}");
+
+      var fileTypescript = new FileInfo(pathTypescript);
+      fileTypescript.Directory?.Create();
+      await File.WriteAllTextAsync(fileTypescript.FullName, generatedCodeTypescript);
+
+      #endregion TypescriptClient
     }
-
-
-    /// <summary>
-    /// GenerateTypeScriptClient function 
-    /// </summary>
-    /// <param name="openApiLocation">string</param>
-    /// <param name="className">string</param>
-    /// <param name="_logger">Logger</param>
-    /// <returns>Task</returns>
-    public async Task GenerateTypeScriptClient(
-      string openApiLocation, 
-      string className,
-      Logger _logger
-    ) { 
-      var document = await OpenApiDocument.FromUrlAsync(openApiLocation); 
-      
-      var settings = new TypeScriptClientGeneratorSettings { 
-        ClassName = className, 
-        Template = TypeScriptTemplate.Fetch, 
-        TypeScriptGeneratorSettings = { Namespace = "HttpClients" }, 
-      }; var generator = new TypeScriptClientGenerator(document, settings); 
-      
-      var generatedCode = generator.GenerateFile(); 
-      var path = $"./ApiGen/{settings.TypeScriptGeneratorSettings.Namespace}/{settings.ClassName}.ts";
-    
-      _logger.Information($"===> Generated typescript-client file path: {path}");
-
-      var file = new FileInfo(path); 
-      file.Directory?.Create(); 
-      await File.WriteAllTextAsync(file.FullName, generatedCode); 
-    }
-
 
   }
 }

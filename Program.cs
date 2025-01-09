@@ -10,6 +10,7 @@ using Services.Test.API.Models;
 using Services.Test.API.Mapping;
 using Services.Test.API.Response;
 using Services.Test.API.Validator;
+using GenApi.Hosted.Service;
 
 namespace Services.Test.API;
 
@@ -112,6 +113,8 @@ public class Program
     // Add FluentValidation to the dependency injection container
     services.AddScoped<IValidator<WeatherForecastDto>, DtoValidator>();
 
+    services.AddHostedService<GenApiHostedService>();
+
     // Build the application pipeline
     var app = builder.Build();
     var apiv1 = app.NewApiVersionSet("WeatherForecast v1").Build();
@@ -136,33 +139,6 @@ public class Program
       "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm",
       "Balmy", "Hot", "Sweltering", "Scorching"
     };
-
-    app.MapGet("/api/v{version:apiVersion}/api-gen",
-      async () =>
-      {
-        await new Shared().GenerateCSharpClient(
-             "http://localhost:5096/swagger/v1/swagger.json",
-             "WeatherForecast",
-             _logger
-        );
-
-        await new Shared().GenerateCSharpController(
-             "http://localhost:5096/swagger/v1/swagger.json",
-             "WeatherForecast",
-             _logger
-        );
-
-         await new Shared().GenerateTypeScriptClient(
-             "http://localhost:5096/swagger/v1/swagger.json",
-             "WeatherForecast",
-             _logger
-        );
-
-        return Results.Ok("C# client, controller and typescript client generated successfully.");
-      }
-    )
-     .WithApiVersionSet(apiv1)
-     .HasApiVersion(1.0);
 
     // Maps a GET endpoint to retrieve a weather forecast.
     app.MapGet(
