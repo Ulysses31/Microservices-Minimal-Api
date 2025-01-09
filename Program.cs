@@ -96,7 +96,9 @@ public class Program
 
     // Enable Serilog self-logging in development mode for debugging
     if (envName.Equals("Development", StringComparison.Ordinal))
+    {
       Serilog.Debugging.SelfLog.Enable(Console.Error);
+    }
     #endregion Logger
 
     // Add essential services to the dependency injection container
@@ -113,7 +115,11 @@ public class Program
     // Add FluentValidation to the dependency injection container
     services.AddScoped<IValidator<WeatherForecastDto>, DtoValidator>();
 
-    services.AddHostedService<GenApiHostedService>();
+    // Add hosted service to the dependency injection container
+    if (envName.Equals("Development", StringComparison.Ordinal))
+    {
+      services.AddHostedService<GenApiHostedService>();
+    }
 
     // Build the application pipeline
     var app = builder.Build();

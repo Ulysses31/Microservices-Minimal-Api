@@ -1,4 +1,4 @@
-﻿namespace Services.Test.API;
+﻿namespace Services.Test.API.Configuration;
 
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;

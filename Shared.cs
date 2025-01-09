@@ -105,11 +105,13 @@ namespace Services.Test.API
     /// </summary>
     /// <param name="openApiLocation">string</param>
     /// <param name="className">string</param>
+    /// <param name="version">string</param>
     /// <param name="_logger">Logger</param>
     /// <returns>Task</returns>
     public async Task GenerateHostedApiDoc(
       string openApiLocation,
       string className,
+      string version,
       ILogger<GenApiHostedService> _logger
     )
     {
@@ -127,7 +129,7 @@ namespace Services.Test.API
 
       var generatorController = new CSharpControllerGenerator(document, settingsController);
       var generatedCodeController = generatorController.GenerateFile();
-      var pathController = $"./ApiGen/{settingsController.CSharpGeneratorSettings.Namespace}/{className}_controller.cs";
+      var pathController = $"./ApiGen/{version}/{settingsController.CSharpGeneratorSettings.Namespace}/{className}_controller.cs";
 
       _logger.LogInformation($"===> Generated controller file path: {pathController}");
 
@@ -149,7 +151,7 @@ namespace Services.Test.API
 
       var generatorClient = new CSharpClientGenerator(document, settingsClient);
       var generatedCodeClient = generatorClient.GenerateFile();
-      var pathClient = $"./ApiGen/{settingsClient.CSharpGeneratorSettings.Namespace}/{settingsClient.ClassName}_client.cs";
+      var pathClient = $"./ApiGen/{version}/{settingsClient.CSharpGeneratorSettings.Namespace}/{settingsClient.ClassName}_client.cs";
 
       _logger.LogInformation($"===> Generated csharp-client file path: {pathClient}");
 
@@ -170,7 +172,7 @@ namespace Services.Test.API
 
       var generatorTypescript = new TypeScriptClientGenerator(document, settingsTypescript);
       var generatedCodeTypescript = generatorTypescript.GenerateFile();
-      var pathTypescript = $"./ApiGen/{settingsTypescript.TypeScriptGeneratorSettings.Namespace}/{settingsTypescript.ClassName}.ts";
+      var pathTypescript = $"./ApiGen/{version}/{settingsTypescript.TypeScriptGeneratorSettings.Namespace}/{settingsTypescript.ClassName}.ts";
 
       _logger.LogInformation($"===> Generated typescript-client file path: {pathTypescript}");
 

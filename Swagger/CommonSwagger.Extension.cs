@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Services.Test.API.Configuration;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Services.Test.API
