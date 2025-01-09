@@ -9,11 +9,11 @@ export const options = {
 export default function () {
   const params = {
     cookies: {},
-    headers: { "x-api-version": "1.0" },
+    headers: { "x-api-version": "2.0" },
   };
 
   const res = http.get(
-    "http://localhost:5096/api/v1/weatherforecast",
+    "http://localhost:5096/api/v2/weatherforecast",
     params
   );
 

@@ -9,6 +9,7 @@ using Services.Test.API.Mapping;
 using Services.Test.API.Response;
 using Services.Test.API.Validator;
 using GenApi.Hosted.Service;
+using Services.Test.API.RateLimit;
 
 namespace Services.Test.API;
 
@@ -102,7 +103,8 @@ public class Program
     // Add essential services to the dependency injection container
     services.AddAuthorization();
 
-    // Swagger setup for API documentation
+    // Rate Limiting setup
+    services.CommonRateLimitSetup();
 
     // Configures Swagger/OpenAPI for API documentation.
     services.CommonSwaggerSetup($"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
@@ -164,11 +166,14 @@ public class Program
       return TypedResults.Ok(resp);
     })
     .Produces<WeatherForecast[]>(200, "application/json")
+    .Produces(401)
+    .Produces(429)
     .Produces(500)
     .WithDescription("Get the weather forecast for the next five days.")
     .WithSummary("Get all the weather forecast.")
     .WithApiVersionSet(apiv2)
-    .HasApiVersion(2.0);
+    .HasApiVersion(2.0)
+    .RequireRateLimiting(CommonRateLimitExtension.FixedPolicy!);
 
     // GET by Id
     app.MapGet(
@@ -197,14 +202,16 @@ public class Program
         }
       })
     .Produces<WeatherForecast>(200, "application/json")
-    .Produces(401)
     .Produces(400)
+    .Produces(401)
     .Produces(404)
     .Produces(429)
+    .Produces(500)
     .WithDescription("Get the weather forecast by id.")
     .WithSummary("Get specific weather forecast.")
     .WithApiVersionSet(apiv1)
-    .HasApiVersion(1.0);
+    .HasApiVersion(1.0)
+    .RequireRateLimiting(CommonRateLimitExtension.FixedPolicy!);
 
     // POST endpoint to create a new weather forecast.
     app.MapPost(
@@ -242,10 +249,12 @@ public class Program
     .Produces(400)
     .Produces(401)
     .Produces(429)
+    .Produces(500)
     .WithDescription("Insert a new weather forecast detail.")
     .WithSummary("Insert weather forecast.")
     .WithApiVersionSet(apiv1)
-    .HasApiVersion(1.0);
+    .HasApiVersion(1.0)
+    .RequireRateLimiting(CommonRateLimitExtension.FixedPolicy!);
 
     // PUT endpoint to update a weather forecast.
     app.MapMethods(
@@ -298,10 +307,12 @@ public class Program
     .Produces(401)
     .Produces(404)
     .Produces(429)
+    .Produces(500)
     .WithDescription("Modify an existing weather forecast by id.")
     .WithSummary("Edit weather forecast.")
     .WithApiVersionSet(apiv1)
-    .HasApiVersion(1.0);
+    .HasApiVersion(1.0)
+    .RequireRateLimiting(CommonRateLimitExtension.FixedPolicy!);
 
     // DELETE endpoint to remove a weather forecast.
     app.MapDelete(
@@ -334,10 +345,12 @@ public class Program
     .Produces(400)
     .Produces(401)
     .Produces(429)
+    .Produces(500)
     .WithDescription("Remove existing weather forecast by id.")
     .WithSummary("Delete weather forecast.")
     .WithApiVersionSet(apiv1)
-    .HasApiVersion(1.0);
+    .HasApiVersion(1.0)
+    .RequireRateLimiting(CommonRateLimitExtension.FixedPolicy!);
 
     #endregion ENDPOINTS
 
@@ -353,6 +366,7 @@ public class Program
 
     app.UseAuthorization();
 
+    app.UseRateLimiter();
 
     _logger.Information("===> Environment: {envName}", envName);
     _logger.Information("===> Host: {HostIpAddress}", requesterInfo.hostInfo.Addr);
