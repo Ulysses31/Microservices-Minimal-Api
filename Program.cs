@@ -1,10 +1,8 @@
 using System.Reflection;
-using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using AutoMapper;
 using FluentValidation;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Serilog;
 using Services.Test.API.Models;
 using Services.Test.API.Mapping;
