@@ -1,6 +1,6 @@
-# Publications.Authors
+# Microservices Minimal API
 
-## Docker
+<!-- ## Docker
 Notes: From the Publications folder run...
 
 1) Build the image
@@ -11,7 +11,7 @@ docker build -f Dockerfile.Publications.Authors --tag publications.authors .
 2) Create and run the container
 ```bash
 docker run --name publications.authors -p 7000:80 -p 7001:443 -e ASPNETCORE_URLS="https://+;http://+" -e ASPNETCORE_HTTPS_PORT=7001 publications.authors
-```
+``` 
 
 ## Nuget
 
@@ -46,6 +46,8 @@ dotnet dev-certs https --trust
 
 ## Swagger
   Path: {Domain}/swagger/index.html
+
+-->
 
 ## K6 Test
   Open CLI and type...
