@@ -10,6 +10,7 @@ using Services.Test.API.Response;
 using Services.Test.API.Validator;
 using GenApi.Hosted.Service;
 using Services.Test.API.RateLimit;
+using Services.Test.API.Configuration;
 
 namespace Services.Test.API;
 
@@ -149,7 +150,10 @@ public class Program
     // Maps a GET endpoint to retrieve a weather forecast.
     app.MapGet(
       "/api/v{version:apiVersion}/weatherforecast",
-      (HttpContext httpContext, IMapper mapper) =>
+      (
+        HttpContext context,
+        IMapper mapper
+      ) =>
     {
       // forecast = Enumerable.Range(1, 5).Select(index =>
       //         new WeatherForecast
@@ -163,9 +167,12 @@ public class Program
 
       WeatherForecast[] resp = mapper.Map<WeatherForecast[]>(forecast);
 
-      return TypedResults.Ok(resp);
+      if (context.Response.ContentType!.Equals("application/xml"))
+        return new XmlResult<WeatherForecast[]>(resp);
+
+      return Results.Ok(resp);
     })
-    .Produces<WeatherForecast[]>(200, "application/json")
+    .Produces<WeatherForecast[]>(200, "application/json", new[] { "application/xml" })
     .Produces(401)
     .Produces(429)
     .Produces(500)
@@ -178,7 +185,11 @@ public class Program
     // GET by Id
     app.MapGet(
       "/api/v{version:apiVersion}/weatherforecast/{id}",
-      (string? id, IMapper mapper) =>
+      (
+        HttpContext context,
+        string? id,
+        IMapper mapper
+      ) =>
       {
         try
         {
@@ -194,6 +205,9 @@ public class Program
 
           var resp = mapper.Map<WeatherForecast>(result);
 
+          if (context.Response.ContentType!.Equals("application/xml"))
+            return new XmlResult<WeatherForecast>(resp);
+
           return Results.Ok(resp);
         }
         catch (System.Exception ex)
@@ -201,7 +215,7 @@ public class Program
           return Results.BadRequest(ex.Message);
         }
       })
-    .Produces<WeatherForecast>(200, "application/json")
+    .Produces<WeatherForecast>(200, "application/json", new[] { "application/xml" })
     .Produces(400)
     .Produces(401)
     .Produces(404)
@@ -217,6 +231,7 @@ public class Program
     app.MapPost(
       "/api/v{version:apiVersion}/weatherforecast",
       async (
+        HttpContext context,
         WeatherForecastDto data,
         IValidator<WeatherForecastDto> validator
       ) =>
@@ -234,6 +249,11 @@ public class Program
 
           forecast = [.. forecast, data];
 
+          if (context.Response.ContentType!.Equals("application/xml")) {
+            //context.Response.StatusCode = 201;
+            return new XmlResult<WeatherForecastDto>(data);
+          }
+
           return Results.Created(
             "/api/v1/weatherforecast/{data.Id}",
             data
@@ -245,7 +265,7 @@ public class Program
         }
       })
     .Accepts<WeatherForecastDto>("application/json")
-    .Produces<WeatherForecast>(201, "application/json")
+    .Produces<WeatherForecast>(201, "application/json", new[] { "application/xml" })
     .Produces(400)
     .Produces(401)
     .Produces(429)
@@ -261,6 +281,7 @@ public class Program
       "/api/v{version:apiVersion}/weatherforecast/{id}",
       [HttpMethod.Patch.Method],
       async (
+        HttpContext context,
         string? id,
         WeatherForecastDto data,
         IValidator<WeatherForecastDto> validator
@@ -317,7 +338,10 @@ public class Program
     // DELETE endpoint to remove a weather forecast.
     app.MapDelete(
       "/api/v{version:apiVersion}/weatherforecast/{id}",
-      (string? id) =>
+      (
+        HttpContext context,
+        string? id
+      ) =>
       {
         try
         {

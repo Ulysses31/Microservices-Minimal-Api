@@ -77,6 +77,20 @@ namespace Services.Test.API
       context.Response.Body = memoryStream;
       //***************************** 
 
+      var acceptHeader = context.Request.Headers["Accept"].ToString();
+
+      if (acceptHeader.Contains("application/json"))
+        context.Response.ContentType = "application/json";
+
+      if (acceptHeader.Contains("application/xml"))
+      {
+        context.Response.ContentType = "application/xml";
+        if (context.Request.Method.Equals("POST"))
+        {
+          context.Response.StatusCode = 201;
+        }
+      }
+
       await next.Invoke();
 
       //****** Response body ********
