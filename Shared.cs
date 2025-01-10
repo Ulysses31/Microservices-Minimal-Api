@@ -79,9 +79,12 @@ namespace Services.Test.API
 
       var acceptHeader = context.Request.Headers["Accept"].ToString();
 
+      //if(acceptHeader.Equals("*/*"))
+      //  context.Response.StatusCode = 415;
+      
       if (acceptHeader.Contains("application/json"))
         context.Response.ContentType = "application/json";
-
+      
       if (acceptHeader.Contains("application/xml"))
       {
         context.Response.ContentType = "application/xml";

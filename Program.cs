@@ -167,6 +167,9 @@ public class Program
 
       WeatherForecast[] resp = mapper.Map<WeatherForecast[]>(forecast);
 
+      if (string.IsNullOrEmpty(context.Response.ContentType))
+        return Results.StatusCode(415);
+
       if (context.Response.ContentType!.Equals("application/xml"))
         return new XmlResult<WeatherForecast[]>(resp);
 
@@ -174,6 +177,7 @@ public class Program
     })
     .Produces<WeatherForecast[]>(200, "application/json", new[] { "application/xml" })
     .Produces(401)
+    .Produces(415)
     .Produces(429)
     .Produces(500)
     .WithDescription("Get the weather forecast for the next five days.")
@@ -205,6 +209,9 @@ public class Program
 
           var resp = mapper.Map<WeatherForecast>(result);
 
+          if (string.IsNullOrEmpty(context.Response.ContentType))
+            return Results.StatusCode(415);
+
           if (context.Response.ContentType!.Equals("application/xml"))
             return new XmlResult<WeatherForecast>(resp);
 
@@ -219,6 +226,7 @@ public class Program
     .Produces(400)
     .Produces(401)
     .Produces(404)
+    .Produces(415)
     .Produces(429)
     .Produces(500)
     .WithDescription("Get the weather forecast by id.")
@@ -249,8 +257,11 @@ public class Program
 
           forecast = [.. forecast, data];
 
-          if (context.Response.ContentType!.Equals("application/xml")) {
-            //context.Response.StatusCode = 201;
+          if (string.IsNullOrEmpty(context.Response.ContentType))
+            return Results.StatusCode(415);
+
+          if (context.Response.ContentType!.Equals("application/xml"))
+          {
             return new XmlResult<WeatherForecastDto>(data);
           }
 
@@ -268,6 +279,7 @@ public class Program
     .Produces<WeatherForecast>(201, "application/json", new[] { "application/xml" })
     .Produces(400)
     .Produces(401)
+    .Produces(415)
     .Produces(429)
     .Produces(500)
     .WithDescription("Insert a new weather forecast detail.")
