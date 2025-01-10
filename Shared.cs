@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using GenApi.Hosted.Service;
 using NSwag;
@@ -81,10 +82,10 @@ namespace Services.Test.API
 
       //if(acceptHeader.Equals("*/*"))
       //  context.Response.StatusCode = 415;
-      
+
       if (acceptHeader.Contains("application/json"))
         context.Response.ContentType = "application/json";
-      
+
       if (acceptHeader.Contains("application/xml"))
       {
         context.Response.ContentType = "application/xml";
@@ -108,6 +109,9 @@ namespace Services.Test.API
         RequestMethod = context.Request.Method,
         RequestPath = context.Request.Path,
         RequestBody = reqBody,
+        RequestHeaders = JsonSerializer.Serialize(context.Request.Headers, new JsonSerializerOptions { WriteIndented = false }),
+        ResponseHeaders = JsonSerializer.Serialize(context.Response.Headers, new JsonSerializerOptions { WriteIndented = false }),
+        ResponseStatusCode = context.Response.StatusCode.ToString(),
         ResponseBody = respBody
       };
 

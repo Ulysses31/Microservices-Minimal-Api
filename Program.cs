@@ -33,7 +33,7 @@ public class Program
     JsonSerializerOptions jsonOptions = new JsonSerializerOptions
     {
       WriteIndented = true,
-      Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+      Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
     };
 
     WeatherForecastDto[] forecast = [
