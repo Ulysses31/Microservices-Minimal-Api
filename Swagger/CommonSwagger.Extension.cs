@@ -128,14 +128,14 @@ namespace Services.Test.API
       app.UseSwaggerUI(
           options =>
           {
-            var descriptions = app.DescribeApiVersions();
-
+             var descriptions = app.DescribeApiVersions();
+ 
             // Add Swagger endpoints for each API version.
-            foreach (var description in descriptions)
+            foreach (var descr in descriptions)
             {
-              var url = $"/swagger/{description.GroupName}/swagger.json";
-              var name = description.GroupName.ToUpperInvariant();
-              options.SwaggerEndpoint(url, name);
+               var url = $"/swagger/{descr.GroupName}/swagger.json";
+               var name = descr.GroupName.ToUpperInvariant();
+               options.SwaggerEndpoint(url, name);
             }
           });
 
